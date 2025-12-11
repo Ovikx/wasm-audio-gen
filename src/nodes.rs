@@ -19,11 +19,31 @@ pub struct SumNodeJS {
 #[derive(Serialize, Deserialize)]
 pub struct SineOscillatorNodeJS {
     pub metadata: Metadata,
-    pub frequency_source_id: i32,
+    pub sine_frequency_source_id: i32,
+
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SawOscillatorNodeJS {
+    pub metadata: Metadata,
+    pub saw_frequency_source_id: i32,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Float32SourceJS {
     pub metadata: Metadata,
     pub value: f32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SplineFloatNode {
+    pub metadata: Metadata,
+    pub frequency_source_id: i32,
+    pub points: Vec<Point>
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Point {
+    pub x: f32,
+    pub y: f32
 }

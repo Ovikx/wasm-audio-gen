@@ -11,7 +11,9 @@ pub enum JSNode {
     MultiplyNodeJS(MultiplyNodeJS),
     SumNodeJS(SumNodeJS),
     SineOscillatorNodeJS(SineOscillatorNodeJS),
+    SawOscillatorNodeJS(SawOscillatorNodeJS),
     Float32SourceJS(Float32SourceJS),
+    SplineFloatNode(SplineFloatNode)
 }
 
 impl WithMetadata for JSNode {
@@ -21,6 +23,8 @@ impl WithMetadata for JSNode {
             JSNode::SumNodeJS(node) => node.metadata,
             JSNode::SineOscillatorNodeJS(node) => node.metadata,
             JSNode::Float32SourceJS(node) => node.metadata,
+            JSNode::SawOscillatorNodeJS(node) => node.metadata,
+            JSNode::SplineFloatNode(node) => node.metadata
         }
     }
 }

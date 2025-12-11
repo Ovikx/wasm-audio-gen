@@ -4,12 +4,9 @@ use audio_gen::{
     context::audio_context::AudioContext,
     generator::SampleGenerator,
     node::{
-        float::Float32Source,
-        multiply::MultiplyNode,
-        sine_oscillator::SineOscillatorNode,
-        source::{SharedFloatSource, Source},
-        sum::SumNode,
+        float::Float32Source, multiply::MultiplyNode, saw_oscillator::SawOscillatorNode, sine_oscillator::SineOscillatorNode, spline_float::SplineFloatNode, sum::SumNode
     },
+    source::{CachedFloatSource, SharedCachedFloatSource}
 };
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
@@ -34,17 +31,16 @@ impl WasmSampleGenerator {
     pub fn new() -> Self {
         panic::set_hook(Box::new(console_error_panic_hook::hook));
         let float_source = Float32Source::new(880.0);
-        let oscillator: SharedFloatSource =
-            rc_refcell_box_source(SineOscillatorNode::new(rc_refcell_box_source(float_source)));
+        let oscillator = SineOscillatorNode::new(rc_refcell_source(CachedFloatSource::new(Box::new(float_source))));
         WasmSampleGenerator {
-            generator: SampleGenerator::new(oscillator, AudioContext::new(44100.)),
+            generator: SampleGenerator::new(rc_refcell_source(CachedFloatSource::new(Box::new(oscillator))), AudioContext::new(44100.)),
         }
     }
 
     pub fn load_graph(&mut self, graph: JsValue) {
         let graph: SourceGraph = serde_wasm_bindgen::from_value(graph).unwrap();
         let mut id_to_js_node: HashMap<i32, JSNode> = HashMap::new();
-        let mut id_to_node: HashMap<i32, SharedFloatSource> = HashMap::new();
+        let mut id_to_node: HashMap<i32, SharedCachedFloatSource> = HashMap::new();
         for node in graph.nodes {
             id_to_js_node.insert(node.metadata().id, node);
         }
@@ -67,7 +63,7 @@ impl WasmSampleGenerator {
                             Rc::clone(id_to_node.get(&node.multiplier_source_id).unwrap());
                         let multiply_node =
                             MultiplyNode::new(multiplicand_source, multiplier_source);
-                        id_to_node.insert(node.metadata.id, rc_refcell_box_source(multiply_node));
+                        id_to_node.insert(node.metadata.id, rc_refcell_source(CachedFloatSource::new(Box::new(multiply_node))));
                     } else {
                         js_nodes_to_materialize.push(node.metadata.id);
                         if !multiplicand_node_exists {
@@ -87,7 +83,7 @@ impl WasmSampleGenerator {
                         let addend_source =
                             Rc::clone(id_to_node.get(&node.addend_source_id).unwrap());
                         let sum_node = SumNode::new(augend_source, addend_source);
-                        id_to_node.insert(node.metadata.id, rc_refcell_box_source(sum_node));
+                        id_to_node.insert(node.metadata.id, rc_refcell_source(CachedFloatSource::new(Box::new(sum_node))));
                     } else {
                         js_nodes_to_materialize.push(node.metadata.id);
                         if !augend_node_exists {
@@ -99,21 +95,43 @@ impl WasmSampleGenerator {
                     }
                 }
                 JSNode::SineOscillatorNodeJS(node) => {
-                    if id_to_node.contains_key(&node.frequency_source_id) {
+                    if id_to_node.contains_key(&node.sine_frequency_source_id) {
                         let frequency_source =
-                            Rc::clone(id_to_node.get(&node.frequency_source_id).unwrap());
+                            Rc::clone(id_to_node.get(&node.sine_frequency_source_id).unwrap());
                         let oscillator_node = SineOscillatorNode::new(frequency_source);
-                        id_to_node.insert(node.metadata.id, rc_refcell_box_source(oscillator_node));
+                        id_to_node.insert(node.metadata.id, rc_refcell_source(CachedFloatSource::new(Box::new(oscillator_node))));
                     } else {
                         js_nodes_to_materialize
-                            .extend([node.metadata.id, node.frequency_source_id]);
+                            .extend([node.metadata.id, node.sine_frequency_source_id]);
+                    }
+                }
+                JSNode::SawOscillatorNodeJS(node) => {
+                    if id_to_node.contains_key(&node.saw_frequency_source_id) {
+                        let frequency_source =
+                            Rc::clone(id_to_node.get(&node.saw_frequency_source_id).unwrap());
+                        let oscillator_node = SawOscillatorNode::new(frequency_source);
+                        id_to_node.insert(node.metadata.id, rc_refcell_source(CachedFloatSource::new(Box::new(oscillator_node))));
+                    } else {
+                        js_nodes_to_materialize
+                            .extend([node.metadata.id, node.saw_frequency_source_id]);
                     }
                 }
                 JSNode::Float32SourceJS(node) => {
                     id_to_node.insert(
                         node.metadata.id,
-                        rc_refcell_box_source(Float32Source::new(node.value)),
+                        rc_refcell_source(CachedFloatSource::new(Box::new(Float32Source::new(node.value)))),
                     );
+                }
+                JSNode::SplineFloatNode(node) => {
+                    if id_to_node.contains_key(&node.frequency_source_id) {
+                        let frequency_source =
+                            Rc::clone(id_to_node.get(&node.frequency_source_id).unwrap());
+                        let spline_node = SplineFloatNode::new(frequency_source, node.points.iter().map(|point| (point.x, point.y)).collect());
+                        id_to_node.insert(node.metadata.id, rc_refcell_source(CachedFloatSource::new(Box::new(spline_node))));
+                    } else {
+                        js_nodes_to_materialize
+                            .extend([node.metadata.id, node.frequency_source_id]);
+                    }
                 }
             }
         }
@@ -129,6 +147,6 @@ impl WasmSampleGenerator {
     }
 }
 
-fn rc_refcell_box_source<T: Source<f32> + 'static>(value: T) -> SharedFloatSource {
-    Rc::new(RefCell::new(Box::new(value)))
+fn rc_refcell_source(value: CachedFloatSource) -> SharedCachedFloatSource {
+    Rc::new(RefCell::new(value))
 }
