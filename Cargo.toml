@@ -7,7 +7,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-audio_gen = { path = "/Users/ovikd/Documents/Code/Rust/audio-gen" }
+audio_gen = { path = "/Users/ovikd/Documents/Code/Rust/audio-gen" } # Local crate; clone https://github.com/Ovikx/audio-gen
 console_error_panic_hook = "0.1.7"
 serde = "1.0.227"
 serde-wasm-bindgen = "0.6.5"
