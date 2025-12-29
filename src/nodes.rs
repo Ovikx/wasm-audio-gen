@@ -5,28 +5,28 @@ use crate::metadata::Metadata;
 #[derive(Serialize, Deserialize)]
 pub struct MultiplyNodeJS {
     pub metadata: Metadata,
-    pub multiplicand_source_id: i32,
-    pub multiplier_source_id: i32,
+    pub multiplicand_source_id: usize,
+    pub multiplier_source_id: usize,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct SumNodeJS {
     pub metadata: Metadata,
-    pub augend_source_id: i32,
-    pub addend_source_id: i32,
+    pub augend_source_id: usize,
+    pub addend_source_id: usize,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct SineOscillatorNodeJS {
     pub metadata: Metadata,
-    pub sine_frequency_source_id: i32,
+    pub sine_frequency_source_id: usize,
 
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct SawOscillatorNodeJS {
     pub metadata: Metadata,
-    pub saw_frequency_source_id: i32,
+    pub saw_frequency_source_id: usize,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -38,7 +38,7 @@ pub struct Float32SourceJS {
 #[derive(Serialize, Deserialize)]
 pub struct SplineFloatNode {
     pub metadata: Metadata,
-    pub frequency_source_id: i32,
+    pub frequency_source_id: usize,
     pub points: Vec<Point>
 }
 
