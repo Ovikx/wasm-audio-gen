@@ -20,7 +20,6 @@ pub struct SumNodeJS {
 pub struct SineOscillatorNodeJS {
     pub metadata: Metadata,
     pub sine_frequency_source_id: usize,
-
 }
 
 #[derive(Serialize, Deserialize)]
@@ -39,11 +38,11 @@ pub struct Float32SourceJS {
 pub struct SplineFloatNode {
     pub metadata: Metadata,
     pub frequency_source_id: usize,
-    pub points: Vec<Point>
+    pub points: Vec<Point>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Point {
     pub x: f32,
-    pub y: f32
+    pub y: f32,
 }
