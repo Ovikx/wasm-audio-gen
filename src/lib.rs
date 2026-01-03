@@ -1,11 +1,12 @@
 use std::{cell::RefCell, panic, rc::Rc};
 
 use audio_gen::{
-    context::audio_context::AudioContext,
+    context::AudioContext,
     generator::SampleGenerator,
     node::{
         float::FloatSource, multiply::MultiplyNode, saw_oscillator::SawOscillatorNode,
-        sine_oscillator::SineOscillatorNode, spline_float::SplineFloatNode, sum::SumNode,
+        sine_oscillator::SineOscillatorNode, spline_float::SplineFloatNode,
+        square_oscillator::SquareOscillatorNode, sum::SumNode,
     },
     source::Source,
 };
@@ -72,6 +73,12 @@ impl WasmSampleGenerator {
                         rc_refcell!(SawOscillatorNode::new(
                             saw_oscillator_node_js.metadata.id,
                             saw_oscillator_node_js.saw_frequency_source_id
+                        ))
+                    }
+                    JSNode::SquareOscillatorNodeJS(square_oscillator_node_js) => {
+                        rc_refcell!(SquareOscillatorNode::new(
+                            square_oscillator_node_js.metadata.id,
+                            square_oscillator_node_js.square_frequency_source_id
                         ))
                     }
                     JSNode::FloatSourceJS(float_source_js) => rc_refcell!(FloatSource::new(

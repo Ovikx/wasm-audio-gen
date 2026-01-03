@@ -29,6 +29,12 @@ pub struct SawOscillatorNodeJS {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct SquareOscillatorNodeJS {
+    pub metadata: Metadata,
+    pub square_frequency_source_id: usize,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Float32SourceJS {
     pub metadata: Metadata,
     pub value: f32,
