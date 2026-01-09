@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::deserializable::nodes::*;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum JSNode {
     MultiplyNodeJS(MultiplyNodeJS),

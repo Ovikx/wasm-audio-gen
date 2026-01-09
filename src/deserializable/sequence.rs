@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::deserializable::source_graph::{AudioContext, SourceGraph};
+use crate::deserializable::{js_node::JSNode, source_graph::AudioContext};
 
 #[derive(Deserialize, Serialize)]
 pub struct GeneratorSequence {
@@ -10,7 +10,7 @@ pub struct GeneratorSequence {
 
 #[derive(Deserialize, Serialize)]
 pub struct GeneratorInterval {
-    pub source_graph: SourceGraph,
+    pub nodes: Vec<JSNode>,
     pub start_sample: u32,
     pub end_sample: u32,
 }

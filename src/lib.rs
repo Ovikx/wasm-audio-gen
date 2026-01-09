@@ -6,12 +6,14 @@ use crate::deserializable::js_node::JSNode;
 extern crate console_error_panic_hook;
 extern crate web_sys;
 
-mod build_generator;
+mod build_nodes;
 mod deserializable;
 mod generator;
 mod macros;
+mod sequencer;
 
-pub use generator::WasmSampleGenerator;
+pub use generator::SampleGenerator;
+pub use sequencer::Sequencer;
 
 #[wasm_bindgen]
 pub fn init() {

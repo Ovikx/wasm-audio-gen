@@ -1,26 +1,17 @@
 use std::{cell::RefCell, rc::Rc};
 
 use audio_gen::{
-    context::AudioContext,
-    generator::SampleGenerator,
     node::{
         FloatSource, MultiplyNode, SawOscillatorNode, SineOscillatorNode, SplineFloatNode,
         SquareOscillatorNode, SumNode,
     },
     source::Source,
 };
-use wasm_bindgen::JsValue;
 
-use crate::{
-    deserializable::{js_node::JSNode, source_graph::ConfiguredSourceGraph},
-    rc_refcell,
-};
+use crate::{deserializable::js_node::JSNode, rc_refcell};
 
-pub fn build_generator(js_graph: JsValue) -> SampleGenerator {
-    let graph: ConfiguredSourceGraph = serde_wasm_bindgen::from_value(js_graph).unwrap();
-    let nodes: Vec<Rc<RefCell<dyn Source>>> = graph
-        .source_graph
-        .nodes
+pub fn build_nodes(js_nodes: Vec<JSNode>) -> Vec<Rc<RefCell<dyn Source>>> {
+    js_nodes
         .iter()
         .map(|node: &JSNode| {
             let core_node: Rc<RefCell<dyn Source>> = match node {
@@ -70,7 +61,5 @@ pub fn build_generator(js_graph: JsValue) -> SampleGenerator {
             };
             core_node
         })
-        .collect();
-
-    SampleGenerator::new(nodes, AudioContext::new(graph.audio_context.sample_rate)).unwrap() // TODO: Hook into JS exception throwing to avoid unwrap() call
+        .collect()
 }
