@@ -4,7 +4,3 @@ use serde::{Deserialize, Serialize};
 pub struct Metadata {
     pub id: usize,
 }
-
-pub trait WithMetadata {
-    fn metadata(&self) -> Metadata;
-}

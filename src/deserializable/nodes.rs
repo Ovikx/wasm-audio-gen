@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::metadata::Metadata;
+use crate::deserializable::metadata::Metadata;
 
 #[derive(Serialize, Deserialize)]
 pub struct MultiplyNodeJS {
