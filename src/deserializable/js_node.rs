@@ -12,4 +12,5 @@ pub enum JSNode {
     SquareOscillatorNodeJS(SquareOscillatorNodeJS),
     FloatSourceJS(Float32SourceJS),
     SplineFloatNode(SplineFloatNode),
+    ExternalFloatNode(ExternalFloatNode),
 }

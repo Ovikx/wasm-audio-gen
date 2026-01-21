@@ -1,16 +1,20 @@
 use std::{cell::RefCell, rc::Rc};
 
 use audio_gen::{
+    input_buffer::SharedExternalInputBuffer,
     node::{
-        FloatSource, MultiplyNode, SawOscillatorNode, SineOscillatorNode, SplineFloatNode,
-        SquareOscillatorNode, SumNode,
+        ExternalFloatNode, FloatSource, MultiplyNode, SawOscillatorNode, SineOscillatorNode,
+        SplineFloatNode, SquareOscillatorNode, SumNode,
     },
     source::Source,
 };
 
 use crate::{deserializable::js_node::JSNode, rc_refcell};
 
-pub fn build_nodes(js_nodes: Vec<JSNode>) -> Vec<Rc<RefCell<dyn Source>>> {
+pub fn build_nodes(
+    js_nodes: Vec<JSNode>,
+    input_buffer: SharedExternalInputBuffer,
+) -> Vec<Rc<RefCell<dyn Source>>> {
     js_nodes
         .iter()
         .map(|node: &JSNode| {
@@ -56,6 +60,13 @@ pub fn build_nodes(js_nodes: Vec<JSNode>) -> Vec<Rc<RefCell<dyn Source>>> {
                             .iter()
                             .map(|point| (point.x, point.y))
                             .collect()
+                    ))
+                }
+                JSNode::ExternalFloatNode(external_float_node) => {
+                    rc_refcell!(ExternalFloatNode::new(
+                        external_float_node.metadata.id,
+                        input_buffer.clone(),
+                        external_float_node.input_buffer_index
                     ))
                 }
             };

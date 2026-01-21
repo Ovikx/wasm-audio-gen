@@ -48,6 +48,12 @@ pub struct SplineFloatNode {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+pub struct ExternalFloatNode {
+    pub metadata: Metadata,
+    pub input_buffer_index: usize,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Point {
     pub x: f32,
     pub y: f32,
