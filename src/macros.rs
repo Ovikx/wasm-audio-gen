@@ -1,6 +1,6 @@
 #[macro_export]
-macro_rules! rc_refcell {
+macro_rules! arc_mutex {
     ($expr:expr) => {
-        Rc::new(RefCell::new($expr))
+        Arc::new(Mutex::new($expr))
     };
 }

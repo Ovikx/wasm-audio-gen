@@ -41,21 +41,24 @@ impl SampleGenerator {
 
     pub fn update_bool(&mut self, index: usize, new_value: bool) {
         self.input_buffer
-            .borrow_mut()
+            .lock()
+            .unwrap()
             .update_bool(index, new_value)
             .unwrap()
     }
 
     pub fn update_f32(&mut self, index: usize, new_value: f32) {
         self.input_buffer
-            .borrow_mut()
+            .lock()
+            .unwrap()
             .update_f32(index, new_value)
             .unwrap()
     }
 
     pub fn update_u32(&mut self, index: usize, new_value: u32) {
         self.input_buffer
-            .borrow_mut()
+            .lock()
+            .unwrap()
             .update_u32(index, new_value)
             .unwrap()
     }
